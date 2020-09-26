@@ -1,0 +1,19 @@
+.nav-pills .nav-link {
+    color: #021F2D;
+    padding: 0.25rem 1rem;
+    cursor: pointer;
+}
+
+.nav-pills .nav-link.active {
+    color: #FAFAFA !important;
+    background-color: #BE4C8F !important;
+    border: 1px solid #707070;
+}
+
+.recharts-text.recharts-label,
+.recharts-cartesian-axis-ticks,
+.recharts-cartesian-axis-tick-value {
+    font-size: 0.75rem;
+    fill: #021F2D;
+    color: #021F2D;
+}
