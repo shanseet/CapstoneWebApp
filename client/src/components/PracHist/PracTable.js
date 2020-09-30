@@ -27,9 +27,13 @@ function PracTable(props) {
             })
         }
 
+        let actionDate = new Date(action.time);
+        let diffMs = actionDate.getTime() - props.start.getTime();
+        let diffMins = Math.round(diffMs / 60000);
+
         return (
             <tr key={action.time}>
-                <td>{action.time}</td>
+                <td>{diffMins}:{('0' + diffMs / 1000).slice(-2)}</td>
                 <td>{idToMove[action.move]}</td>
                 <td>{positions ? positions : "-"}</td>
                 <td>{indivLag ? indivLag : "-"}</td>

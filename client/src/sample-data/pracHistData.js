@@ -1,8 +1,8 @@
 const pracHist = [
     {
-        id: 3,
+        _id: 3,
         date: "23 Jun 20",
-        time: "11:52",
+        start: "11:52",
         dancers: [2,3,4],
         moves: [
             {
@@ -58,9 +58,9 @@ const pracHist = [
         ]
     },
     {
-        id: 2,
+        _id: 2,
         date: "22 Jun 20",
-        time: "13:56",
+        start: "13:56",
         dancers: [1],
         moves: [
             {
@@ -74,9 +74,9 @@ const pracHist = [
         ]
     },
     {
-        id: 1,
+        _id: 1,
         date: "22 Jun 20",
-        time: "13:31",
+        start: "13:31",
         dancers: [1, 2, 3],
         moves: [
             {

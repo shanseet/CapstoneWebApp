@@ -42,9 +42,12 @@ function HomeLineGraph(props) {
         )
     })
 
+    let start = new Date(lastPrac.start);
+
     return (
         <div>
-            <small className="text-muted">{lastPrac.date} {lastPrac.time}</small>
+            <small className="text-muted">{start.toDateString() + " " + 
+                ('0' + start.getHours()).slice(-2) + ":" + ('0' + start.getMinutes()).slice(-2)}</small>
             <ResponsiveContainer width="85%" height={300}>
                 <LineChart data={graphs}>
                     <CartesianGrid stroke="rgba(112,112,112,0.2)" strokeDasharray="3 3" />
