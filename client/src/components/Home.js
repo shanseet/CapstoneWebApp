@@ -10,10 +10,10 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:4000/counter')
+        axios.get('http://localhost:4000/api/pracs/counter')
             .then(response => {
                 this.setState({ totalPracs: response.data });
-                axios.get("http://localhost:4000/pracs/" + response.data)
+                axios.get("http://localhost:4000/api/pracs/" + response.data)
                     .then(response2 => {
                         this.setState({ lastPrac: response2.data });
                         this.setState({ isLoaded: true });

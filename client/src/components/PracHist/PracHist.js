@@ -13,7 +13,7 @@ class PracHist extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:4000/pracs')
+        axios.get('http://localhost:4000/api/pracs')
             .then(response => {
                 this.setState({ pracData: response.data });
                 this.setState({ dataIsReturned: true });
