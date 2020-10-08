@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 /* ========================= */
-const Prac = require('../models/Pracs');
-const Counter = require('../models/Counters');
 const pracsController = require('../controllers/pracsController');
 /* ========================= */
 router.route('/')

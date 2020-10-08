@@ -17,6 +17,7 @@ function AllMovesChart(props) {
 
     const formatTooltip = value => `${value}%`;
 
+
     return (
         <ResponsiveContainer width="85%" height={300}>
             <LineChart data={props.data}>
@@ -28,13 +29,13 @@ function AllMovesChart(props) {
                     interval={0}
                     height={50}
                     minTickGap={1}
-                    label={{ value: 'Practice date & time', position: 'insideTopRight', offset: 5}}
+                    label={{ value: 'Practice date & time', position: 'insideTopRight', offset: 5 }}
                 />
                 <YAxis
                     unit="%"
                     label={{ value: 'Sync', angle: -90, position: 'insideLeft' }}
                     type="number"
-                    domain={[0, 100]} 
+                    domain={[0, 100]}
                 />
                 <Tooltip contentStyle={tooltipStyle} formatter={formatTooltip} />
             </LineChart>

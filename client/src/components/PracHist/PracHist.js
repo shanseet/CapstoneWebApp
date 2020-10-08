@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import API from '../../utils/API';
 import Spinner from 'react-bootstrap/Spinner'
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
@@ -13,7 +13,7 @@ class PracHist extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:4000/api/pracs')
+        API.getAllPracs()
             .then(response => {
                 this.setState({ pracData: response.data });
                 this.setState({ dataIsReturned: true });

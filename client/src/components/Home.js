@@ -1,7 +1,7 @@
 import React from 'react';
-import axios from 'axios';
 import Spinner from 'react-bootstrap/Spinner'
 import HomeLineGraph from './HomeLineGraph';
+import API from '../utils/API';
 
 class Home extends React.Component {
     constructor(props) {
@@ -10,13 +10,12 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:4000/api/pracs/counter')
-            .then(response => {
-                this.setState({ totalPracs: response.data });
-                axios.get("http://localhost:4000/api/pracs/" + response.data)
-                    .then(response2 => {
-                        this.setState({ lastPrac: response2.data });
-                        this.setState({ isLoaded: true });
+        API.getNum()
+            .then(pracNum => {
+                this.setState({ totalPracs: pracNum.data });
+                API.getOnePrac(pracNum.data)
+                    .then(prac => {
+                        this.setState({ lastPrac: prac.data, isLoaded: true });
                     })
                     .catch((err) => console.log(err));
             }).catch((err) => console.log(err));

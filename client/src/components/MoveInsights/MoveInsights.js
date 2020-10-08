@@ -26,7 +26,7 @@ class MoveInsights extends React.Component {
                 <div className="outline-box text-center p-5">
                     <p className="pb-3">Sync of up to last 50 move executions</p>
                     <AllMovesChart
-                        data={data.filter((move) => { return move.move === this.state.tab }).slice(-50)}
+                        data={data.find((move) => { return move.move === this.state.tab }).data.slice(-50)}
                     />
                 </div>
             </div>
