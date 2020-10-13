@@ -6,10 +6,10 @@ import Col from 'react-bootstrap/Col';
 const mqtt = require('mqtt');
 
 function ActivePrac() {
-    // const [mqttData, setMqttData] = useState("nothing heard yet");
     const [move, updateMove] = useState("...");
     const [positions, updatePositions] = useState("...");
     const [timeDelay, updateTimeDelay] = useState("...");
+    const [count, updateCount] = useState(0);
 
     useEffect(() => {
         let mqttSub = mqtt.connect('ws://broker.hivemq.com:8000/mqtt');
@@ -20,10 +20,11 @@ function ActivePrac() {
         });
 
         mqttSub.on('message', function (topic, msg) {
+            updateCount(count => count + 1);
             let received = msg.toString().split("|");
             updatePositions(received[0]);
             updateMove(received[1]);
-            updateTimeDelay(parseInt(received[2]*1000));
+            updateTimeDelay(parseInt(received[2] * 1000));
         });
 
         return () => {
@@ -50,13 +51,13 @@ function ActivePrac() {
                 </Col> */}
                 <Col className="outline-box py-4">
                     <div style={labelStyle}>Move</div>
-                    <Row className="justify-content-center">{move}</Row>
+                    <Row className="justify-content-center">{count ? count + "." : ""} {move}</Row>
                     <br />
-                    
+
                     <Row className="justify-content-center">
                         <Col xs={4}>
                             <div style={labelStyle}>Delay</div>
-                            <div>{timeDelay === "..." ? "..." : timeDelay + "ms" } </div>
+                            <div>{timeDelay === "..." ? "..." : timeDelay + "ms"} </div>
                         </Col>
                         <Col xs={4}>
                             <div style={labelStyle}>Sync</div>
