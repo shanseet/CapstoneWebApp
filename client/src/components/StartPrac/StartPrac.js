@@ -6,7 +6,6 @@ class StartPrac extends React.Component {
     constructor() {
         super();
         this.state = {
-            numDancers: 1,
             hasStarted: false
         };
 
@@ -26,10 +25,9 @@ class StartPrac extends React.Component {
                     <ActivePrac /> 
                     :
                     <StartQns
-                        setDancers={(e) => this.setState({ numDancers: parseInt(e.target.name) })}
-                        numDancers={this.state.numDancers}
+                        // setDancers={(e) => this.setState({ numDancers: parseInt(e.target.name) })}
+                        // numDancers={this.state.numDancers}
                         handleStart={this.handleStart}
-                        hasStarted={this.state.hasStarted}
                     />
                 }
             </div>
