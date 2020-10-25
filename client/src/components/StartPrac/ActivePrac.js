@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -10,9 +10,13 @@ function ActivePrac() {
     const [positions, updatePositions] = useState("...");
     const [timeDelay, updateTimeDelay] = useState("...");
     const [count, updateCount] = useState(0);
+    const [isEnding, setEnding] = useState(0);
+    let history = useHistory();
+    // eslint-disable-next-line
+    let mqttSub = undefined;
 
     useEffect(() => {
-        let mqttSub = mqtt.connect('ws://broker.hivemq.com:8000/mqtt');
+        mqttSub = mqtt.connect('ws://broker.hivemq.com:8000/mqtt');
 
         mqttSub.on('connect', function () {
             mqttSub.subscribe("137.132.86.240.G17");
@@ -25,14 +29,23 @@ function ActivePrac() {
             updatePositions(received[0]);
             updateMove(received[1]);
             updateTimeDelay(parseInt(received[2] * 1000));
+            if (received[1] === "logout") {
+                setEnding(3);
+                setTimeout(() => { history.push("/"); }, 3000);
+            }
         });
 
         return () => {
             mqttSub.end();
             console.log("disconnecting")
         };
-    }, []);
+    }, [history]);
 
+    useEffect(() => {
+        const currentCount = isEnding;
+        const timer = currentCount > 0 && setTimeout(() => { setEnding(currentCount - 1) }, 1000);
+        return () => clearTimeout(timer);
+    }, [isEnding]);
 
     const labelStyle = {
         color: "#707070",
@@ -51,7 +64,9 @@ function ActivePrac() {
                 </Col> */}
                 <Col className="outline-box py-4">
                     <div style={labelStyle}>Move</div>
-                    <Row className="justify-content-center">{count ? count + "." : ""} {move}</Row>
+                    <Row className="justify-content-center">
+                        {count > 0 ? count + "." : ""} {move}
+                    </Row>
                     <br />
 
                     <Row className="justify-content-center">
@@ -74,9 +89,19 @@ function ActivePrac() {
             </Row>
 
             <br />
-            <NavLink to="/" exact>
-                <button className="btn start-btn"><span className="end-square"></span>END</button>
-            </NavLink>
+            {isEnding > 0 ?
+                <span className="ending-nums">
+                    <span style={labelStyle}>LOGOUT DETECTED</span>
+                    <span className="px-4">returning to dashboard in {isEnding}...</span>
+                </span>
+                :
+                <button onClick={() => { 
+                    mqttSub.publish("137.132.86.240.G17", "-|logout|0|");
+                }}
+                    className="btn start-btn">
+                    LOGOUT
+                </button>
+            }
         </div>
     )
 }
