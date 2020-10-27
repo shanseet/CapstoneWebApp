@@ -1,5 +1,4 @@
 import React from 'react';
-// import DancerButton from './DancerButton';
 // import dancerIcon from '../../assets/dance-icon.svg';
 
 function StartQns(props) {
