@@ -1,38 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import StartQns from './StartQns';
 import ActivePrac from './ActivePrac';
+import API from '../../utils/API';
 
-class StartPrac extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            hasStarted: false
-        };
+function StartPrac() {
+    const [hasStarted, setStarted] = useState(false);
+    const [isConnected, setConnected] = useState(false);
 
-        this.handleStart = this.handleStart.bind(this);
-    }
+    useEffect(() => {
+        API.isActive()
+            .then(response => {
+                setConnected(true);
+                if (response.data === 1) setStarted(true);
+            })
+            .catch(err => {
+                console.log(err.resposne);
+            });
+    }, [])
 
-    handleStart() {
-        this.setState(state => ({
-            hasStarted: !state.hasStarted
-        }));
-    };
-
-    render() {
-        return (
-            <div className="text-center">
-                {this.state.hasStarted ?
-                    <ActivePrac /> 
-                    :
-                    <StartQns
-                        // setDancers={(e) => this.setState({ numDancers: parseInt(e.target.name) })}
-                        // numDancers={this.state.numDancers}
-                        handleStart={this.handleStart}
-                    />
-                }
+    return (
+        <div className="text-center" style={{ position: "relative" }}>
+            <div style={{ position: "absolute", right: "0", top: "15px", fontSize: "0.8em" }}>
+                {isConnected ? "connected! data will be stored" : "offline :( connect to store data"}
             </div>
-        )
-    }
+
+            {hasStarted ?
+                <ActivePrac
+                    handleStop={() => { if (isConnected) API.setActive(0) }} 
+                    sendData = {(newPrac) => { if (isConnected) API.addPrac(newPrac)}}
+                />
+                :
+                <StartQns handleStart={() => {
+                    setStarted(true);
+                    API.setActive(1);
+                }} />
+            }
+        </div>
+    )
 }
 
 export default StartPrac;

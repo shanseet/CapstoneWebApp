@@ -2,12 +2,10 @@ const mongoose = require('mongoose');
 
 const moveSchema = new mongoose.Schema({
     time: Date,
-    move: Number,
+    move: String,
     position: [Number],
-    lag: [{
-        d_id: Number,
-        lag: Number
-    }]
+    lag: [Number],
+    sync: [Number]
 }, {_id : false })
 
 const pracSchema = new mongoose.Schema({

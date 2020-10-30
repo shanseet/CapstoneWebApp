@@ -35,8 +35,12 @@ class Home extends React.Component {
                         <div className="outline-box m-1 py-4 text-center">
                             <div>Last practice</div>
                             {this.state.isLoaded ?
-                                <HomeLineGraph lastPrac={this.state.lastPrac} /> 
-                                : <Spinner className="mt-3" animation="border" />
+                                this.state.lastPrac ?
+                                    <HomeLineGraph lastPrac={this.state.lastPrac} /> 
+                                    : 
+                                    <div className="py-5">no practices yet!</div>
+                                :
+                                <Spinner className="mt-3" animation="border" />
                             }
                         </div>
                     </div>

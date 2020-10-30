@@ -5,35 +5,56 @@ import Col from 'react-bootstrap/Col';
 
 const mqtt = require('mqtt');
 
-function ActivePrac() {
+function ActivePrac(props) {
     const [move, updateMove] = useState("...");
     const [positions, updatePositions] = useState(["..."]);
     const [timeDelays, updateTimeDelays] = useState([]);
+    const [sync, updateSync] = useState(-1);
     const [count, updateCount] = useState(0);
     const [isEnding, setEnding] = useState(0);
     const [mqttSub,] = useState(mqtt.connect('ws://broker.hivemq.com:8000/mqtt'));
+    const [allMoves, updateMoves] = useState([]);
+    const [startTime, updateStart] = useState();
     let history = useHistory();
 
     useEffect(() => {
         mqttSub.on('connect', function () {
             mqttSub.subscribe("137.132.86.240.G17");
             console.log("topic connected");
+            updateStart(new Date());
         });
 
         mqttSub.on('message', function (topic, msg) {
+            let move = { time: new Date() };
             updateCount(count => count + 1);
             let received = msg.toString().split("|");
             updateMove(received[1]);
+            move.move = received[1];
             if (received[0]) {
-                updatePositions(received[0].substring(1).split(" "));
+                let dancerArr = [];
+                received[0].substring(1).split(" ").forEach((dancer) => {
+                    dancerArr.push(dancer);
+                })
+                updatePositions(dancerArr);
+                move.position = dancerArr;
             }
             if (received[2]) {
                 let delayArr = [];
+                let syncCalc = 0;
                 received[2].split(" ").forEach((val) => {
-                    delayArr.push(parseFloat(val) * 1000);
+                    delayArr.push((parseFloat(val) * 1000).toFixed(2));
+                    syncCalc += Math.max(0, parseFloat(val) * 1000 - 200);
                 })
+                if (delayArr.length > 1) {
+                    syncCalc = Math.max(0, 100 - syncCalc / ((delayArr.length - 1) * 8)).toFixed(1);
+                }
+
                 updateTimeDelays(delayArr);
+                updateSync(syncCalc);
+                move.lag = delayArr;
+                move.sync = syncCalc;
             }
+            updateMoves(prevState => [...prevState, move]);
             if (received[1] === "logout") {
                 mqttSub.end();
                 setEnding(3);
@@ -43,9 +64,10 @@ function ActivePrac() {
 
         return () => {
             mqttSub.end();
-            console.log("disconnecting")
+            props.handleStop();
+            console.log("disconnecting");
         };
-    }, [history, mqttSub]);
+    }, [history, mqttSub, props]);
 
     useEffect(() => {
         const currentCount = isEnding;
@@ -66,23 +88,14 @@ function ActivePrac() {
             <Col key={index}>
                 <div>{position}</div>
                 <div>
-                    {timeDelays[index] >= 0 ? timeDelays[index].toFixed(2) + "ms" : <br />}
+                    {timeDelays[index] >= 0 ? timeDelays[index] + "ms" : <br />}
                 </div>
             </Col>
         )
     })
 
-    let syncCalc = -1;
-    if (timeDelays.length > 1) {
-        syncCalc = 0;
-        for (let i = 0; i < timeDelays.length; i++) {
-            syncCalc += Math.max(0, timeDelays[i] - 200);
-        }
-        syncCalc = Math.max(0, 100 - syncCalc / ((timeDelays.length - 1) * 8)).toFixed(1);
-    }
-
     return (
-        <div className="pt-5 pb-3" style={{ fontSize: "1.75rem" }}>
+        <div className="pt-5 pb-3" style={{ fontSize: "2rem" }}>
             <div className="fixed-top" style={{ height: "6rem", backgroundColor: "white" }}></div>
             <Row className="text-center">
                 <Col className="outline-box py-4">
@@ -93,7 +106,7 @@ function ActivePrac() {
                         </Col>
                         <Col xs={4}>
                             <div style={labelStyle}>Sync</div>
-                            <div>{syncCalc !== -1 ? syncCalc + "%" : "-"}</div>
+                            <div>{sync !== -1 ? sync + "%" : "-"}</div>
                         </Col>
                     </Row>
                     <br />
@@ -113,6 +126,9 @@ function ActivePrac() {
                 :
                 <button onClick={() => {
                     mqttSub.publish("137.132.86.240.G17", "|logout||");
+                    let newprac = { start: startTime, moves: allMoves };
+                    console.log(newprac);
+                    if (newprac.moves.length) props.sendData(newprac);
                 }}
                     className="btn start-btn">
                     LOGOUT

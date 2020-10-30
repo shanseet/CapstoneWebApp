@@ -30,16 +30,15 @@ class PracHist extends React.Component {
         } else {
             let accs = this.state.pracData.map((prac) => {
                 let startDate = new Date(prac.start);
-                let hm = ('0' + startDate.getHours()).slice(-2) + ":" + ('0' + startDate.getMinutes()).slice(-2);
 
                 return (
                     <Card key={prac._id} className="prac-hist">
                         <Accordion.Toggle as={Card.Header} eventKey={prac._id}>
-                            {startDate.getDate() + "-" + (startDate.getMonth() + 1) + "-" + startDate.getFullYear() + " " + hm}
+                            {startDate.toLocaleString()}
                         </Accordion.Toggle>
                         <Accordion.Collapse eventKey={prac._id}>
                             <Card.Body>
-                                <PracTable moves={prac.moves} dancers={prac.dancers} start={startDate} />
+                                <PracTable moves={prac.moves} start={startDate} />
                             </Card.Body>
                         </Accordion.Collapse>
                     </Card>
@@ -48,6 +47,14 @@ class PracHist extends React.Component {
 
             return (
                 <div>
+                    <button type="button" className="btn btn-danger delete-all-btn" onClick={() => {
+                        if (window.confirm("Are you sure you want to delete all practices? This action is irreversible")) {
+                            API.deleteAllPracs();
+                            window.location.reload();
+                        }}}
+                    >
+                        DELETE ALL
+                    </button>
                     <Accordion defaultActiveKey={this.state.pracData.length.toString()}>
                         {accs}
                     </Accordion>
