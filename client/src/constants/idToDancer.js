@@ -1,10 +1,10 @@
 const idToDancer = {
-    1: "Foo",
-    2: "GW",
-    3: "JL",
-    4: "RM",
-    5: "Sai",
-    6: "SS"
+    1: "SAI",
+    2: "SHA",
+    3: "GIN",
+    4: "FCH",
+    5: "JST",
+    6: "RIS"
 };
 
 export default idToDancer;

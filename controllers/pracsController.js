@@ -21,18 +21,17 @@ module.exports = {
         Counter.findOneAndUpdate({ _id: "pracid" }, { $inc: { sequence_value: 1 } }, { new: true })
             .then(counter => {
                 req.body.prac["_id"] = counter.sequence_value;
-                console.log(req.body.prac);
                 Prac.create(req.body.prac)
                     .then(newPrac => res.json({ prac: "prac added successfully" }))
-                    .catch(err => { res.status(422).json(err); console.log(err)});
+                    .catch(err => { res.status(422).json(err); console.log(err) });
             })
     },
     deleteAll: function (req, res) {
         Counter.findOneAndUpdate({ _id: "pracid" }, { sequence_value: 0 }, { new: true })
-            .then(counter => res.json("reset counter"))
+            .then(counter => {
+                Prac.deleteMany({}).then(result => res.json(result))
+            })
             .catch(err => res.status(422).json(err));
-        Prac.deleteMany({})
-            .then(result => res.json(result))
-            .catch(err => res.status(422).json(err));
+
     }
 };

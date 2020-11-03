@@ -6,10 +6,9 @@ import logo from "../assets/Logo.svg";
 function MainNav() {
 
     const items = [
-        { name: "DASHBOARD", route: "/" },
+        { name: "START PRACTICE", route: "/" },
         { name: "PRACTICE HISTORY", route: "/practice-history" },
         { name: "MOVE INSIGHTS", route: "/move-insights" },
-        { name: "START PRACTICE", route: "/start" }
     ];
 
     const navItems = items.map((item) => {

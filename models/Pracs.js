@@ -11,7 +11,6 @@ const moveSchema = new mongoose.Schema({
 const pracSchema = new mongoose.Schema({
     _id: String,
     start: Date,
-    dancers: [Number],
     moves: [moveSchema],
 })
 

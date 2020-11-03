@@ -1,21 +1,18 @@
 import React from 'react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import CustomizedAxisTick from './CustomizedAxisTick';
+import CustomizedAxisTick from '../CustomizedAxisTick';
 
-import idToDancer from '../constants/idToDancer';
-import idToMove from '../constants/idToMove';
+import idToDancer from '../../constants/idToDancer';
 
 function HomeLineGraph(props) {
     let graphs = [];
-    let lastPrac = props.lastPrac;
+    let lastPrac = props.prac;
     lastPrac.moves.forEach((action) => {
         let graph = {};
-        graph.move = idToMove[action.move];
-        if (lastPrac.dancers.length > 1) {
-            lastPrac.dancers.forEach((dancer) => {
-                graph[idToDancer[dancer]] = action.lag.find(d => d.d_id === dancer).lag;
-            })
-        }
+        graph.move = action.move;
+        action.position.forEach((did, index) => {
+            graph[idToDancer[did]] = action.lag[index];
+        })
         graphs.push(graph);
     });
 
@@ -30,7 +27,7 @@ function HomeLineGraph(props) {
         borderRadius: "4px"
     };
 
-    let lines = lastPrac.dancers.map((dancer, index) => {
+    let lines = lastPrac.moves[0].position.map((dancer, index) => {
         return (
             <Line
                 type="monotone"
@@ -46,8 +43,7 @@ function HomeLineGraph(props) {
 
     return (
         <div>
-            <small className="text-muted">{start.toDateString() + " " + 
-                ('0' + start.getHours()).slice(-2) + ":" + ('0' + start.getMinutes()).slice(-2)}</small>
+            <small className="text-muted">{start.toLocaleString()}</small>
             <ResponsiveContainer width="85%" height={300}>
                 <LineChart data={graphs}>
                     <CartesianGrid stroke="rgba(112,112,112,0.2)" strokeDasharray="3 3" />
@@ -56,7 +52,7 @@ function HomeLineGraph(props) {
                         dataKey="move"
                         tick={<CustomizedAxisTick />}
                         interval={0}
-                        height={50}
+                        height={75}
                         minTickGap={1}
                         label={{ value: 'Move', position: 'insideTopRight', offset: 5 }}
                     />

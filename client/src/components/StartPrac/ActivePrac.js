@@ -55,10 +55,13 @@ function ActivePrac(props) {
                 move.sync = syncCalc;
             }
             updateMoves(prevState => [...prevState, move]);
-            if (received[1] === "logout") {
+            if (received[1] === "logout") { //if the logout message is not from the button
+                if (received[0] && props.iStarted) {
+                    document.getElementById("logout-btn").click();
+                }
                 mqttSub.end();
                 setEnding(3);
-                setTimeout(() => { history.push("/"); }, 3000);
+                setTimeout(() => { history.push("/practice-history"); }, 3000);
             }
         });
 
@@ -82,6 +85,19 @@ function ActivePrac(props) {
         paddingBottom: "0.5rem",
         textTransform: "uppercase"
     }
+
+    const logoutBtn = ( //informs all other clients of logout
+        <button id="logout-btn" onClick={() => {
+            mqttSub.publish("137.132.86.240.G17", "|logout||");
+            let newprac = { start: startTime, moves: allMoves };
+            console.log("i ended and i'm pushing");
+            console.log(newprac);
+            if (newprac.moves.length) props.sendData(newprac);
+        }}
+            className="btn start-btn">
+            LOGOUT
+        </button>
+    )
 
     let positionDelay = positions.map((position, index) => {
         return (
@@ -120,19 +136,11 @@ function ActivePrac(props) {
             <br />
             {isEnding > 0 ?
                 <div className="ending-nums">
-                    returning to dashboard in
+                    redirecting to practice history in
                     <span className="pl-4 pb-1" style={{ fontSize: "3rem", verticalAlign: "bottom" }}>{isEnding}</span>
                 </div>
                 :
-                <button onClick={() => {
-                    mqttSub.publish("137.132.86.240.G17", "|logout||");
-                    let newprac = { start: startTime, moves: allMoves };
-                    console.log(newprac);
-                    if (newprac.moves.length) props.sendData(newprac);
-                }}
-                    className="btn start-btn">
-                    LOGOUT
-                </button>
+                props.iStarted && logoutBtn
             }
         </div>
     )

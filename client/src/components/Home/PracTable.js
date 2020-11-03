@@ -34,7 +34,7 @@ function PracTable(props) {
 
     return (
         <div>
-            <Table bordered size="sm">
+            <Table size="sm">
                 <thead>
                     <tr>
                         <th width="14%">At</th>

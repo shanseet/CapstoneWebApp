@@ -56,3 +56,79 @@ a:hover {
     line-height: 3rem;
     font-size: 1.2rem;
 }
+
+.side-nav .nav-item {
+    border: 1px solid #707070;
+    line-height: 3em;
+    cursor: pointer;
+}
+
+
+/* PRACTICE HIST */
+table {
+    font-size: 0.9rem;
+}
+
+table tr, table td, table thead th {
+    border: 1px solid #707070 !important;
+}
+
+thead {
+    background-color:#41547F;
+    color: #FAFAFA;
+    border: 1px solid #707070;
+}
+
+.red-bg, .green-bg {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.red-bg {
+    margin-left: -0.3rem;
+    margin-top: -0.3rem;
+    background-color: red;
+    opacity: 0.3;
+}
+
+.green-bg {
+    background-color: green;
+    opacity: 0.4;
+}
+
+.info-icon {
+    position: relative;
+}
+
+.info-icon .show-info {
+    display: none;
+    background-color: #021F2D;
+    border-radius: 5px;
+    color: #FAFAFA;
+    font-weight: 400;
+    font-size: 0.75rem;
+    position: absolute;
+    top: -96%;
+    transform: translateY(-50%) translateX(-30px);
+    width: 120px;
+    padding: 0.4em;
+}
+
+.info-icon .show-info::after {
+    content: '▼';
+    position: absolute;
+    bottom: -13px;
+    left: 66px;
+    color: #021F2D;
+}
+
+.info-icon img:hover+.show-info {
+    display: block;
+}
+
+.btn.delete-all-btn {
+    font-size: 0.8em;
+    display: block;
+    margin-top: 1em;
+}

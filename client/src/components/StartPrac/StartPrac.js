@@ -5,6 +5,7 @@ import API from '../../utils/API';
 
 function StartPrac() {
     const [hasStarted, setStarted] = useState(false);
+    const [iStarted, didIStart] = useState(false); //will push to database only if true
     const [isConnected, setConnected] = useState(false);
 
     useEffect(() => {
@@ -28,10 +29,12 @@ function StartPrac() {
                 <ActivePrac
                     handleStop={() => { if (isConnected) API.setActive(0) }} 
                     sendData = {(newPrac) => { if (isConnected) API.addPrac(newPrac)}}
+                    iStarted = {iStarted}
                 />
                 :
                 <StartQns handleStart={() => {
                     setStarted(true);
+                    didIStart(true);
                     API.setActive(1);
                 }} />
             }
