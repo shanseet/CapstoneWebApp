@@ -8,11 +8,11 @@ router.route('/')
     .get(pracsController.getAll)
     .post(pracsController.add);
 
-router.route('/counter')
-    .get(pracsController.getNum);
-
 router.route('/deleteAll')
     .post(pracsController.deleteAll);
+
+router.route('/delete/:id')
+    .post(pracsController.deleteOne);
 
 router.route('/isactive')
     .get(activePracController.isActive)

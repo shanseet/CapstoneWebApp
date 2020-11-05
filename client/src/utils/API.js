@@ -13,10 +13,6 @@ export default {
 	addPrac: function (prac) {
 		return axios.post('http://localhost:4000/api/pracs', { prac: prac });
 	},
-	// Gets the number of pracs so far
-	getNum: function () {
-		return axios.get('http://localhost:4000/api/pracs/counter');
-	},
 	// Check whether an active practice session is ongoing
 	isActive: function () {
 		return axios.get('http://localhost:4000/api/pracs/isactive');
@@ -24,6 +20,9 @@ export default {
 	// update an active practice session state
 	setActive: function (startstop) {
 		return axios.post('http://localhost:4000/api/pracs/isactive', { startstop: startstop });
+	},
+	deleteOnePrac: function (id) {
+		return axios.post('http://localhost:4000/api/pracs/delete/' + id);
 	},
 	deleteAllPracs: function () {
 		return axios.post('http://localhost:4000/api/pracs/deleteAll');

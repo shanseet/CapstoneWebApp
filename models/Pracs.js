@@ -5,11 +5,10 @@ const moveSchema = new mongoose.Schema({
     move: String,
     position: [Number],
     lag: [Number],
-    sync: [Number]
+    sync: Number,
 }, {_id : false })
 
 const pracSchema = new mongoose.Schema({
-    _id: String,
     start: Date,
     moves: [moveSchema],
 })
