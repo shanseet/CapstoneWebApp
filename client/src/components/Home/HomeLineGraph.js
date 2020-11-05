@@ -57,7 +57,7 @@ function HomeLineGraph(props) {
                         label={{ value: 'Move', position: 'insideTopRight', offset: 5 }}
                     />
                     <YAxis
-                        label={{ value: 'Time lag (ms)', angle: -90, position: 'insideLeft' }}
+                        label={{ value: 'Delay (ms)', angle: -90, position: 'insideLeft' }}
                     // type="number"
                     />
                     <Legend verticalAlign="top" align="right" height={36} />

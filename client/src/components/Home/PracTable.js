@@ -15,7 +15,7 @@ function PracTable(props) {
         action.position.forEach(dancer => {
             positions += idToDancer[dancer] + " ";
         })
-        bg = <div className="red-bg"><div className="green-bg" style={{ opacity: `${action.sync / 100}` }}></div></div>;
+        bg = <div className="green-bg"><div className="red-bg" style={{ opacity: `${action.sync / 4000}` }}></div></div>;
 
         let actionDate = new Date(action.time).toLocaleTimeString();
 
@@ -26,7 +26,7 @@ function PracTable(props) {
                 <td>{positions ? positions : "-"}</td>
                 <td>{indivLag ? indivLag : "-"}</td>
                 <td style={{ position: "relative" }}>
-                    {action.position.length > 1 ? <> {bg} {action.sync + "%"}</> : "-"}
+                    {action.position.length > 1 ? <>{bg} {action.sync}</> : "-"}
                 </td>
             </tr>
         )
@@ -40,9 +40,9 @@ function PracTable(props) {
                         <th width="14%">At</th>
                         <th width="16%">Move</th>
                         <th width="16%">Positions</th>
-                        <th width="38%">Time lag (ms)</th>
-                        <th width="16%" className="info-icon">
-                            Sync <img src={infoIcon} alt="info" />
+                        <th width="34%">Delay (ms)</th>
+                        <th width="20%" className="info-icon">
+                            Avg Delay (ms) <img src={infoIcon} alt="info" />
                             <span className="show-info">This tooltip will show the formula</span>
                         </th>
                     </tr>
