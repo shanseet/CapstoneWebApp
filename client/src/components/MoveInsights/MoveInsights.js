@@ -1,37 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Spinner from 'react-bootstrap/Spinner';
 import AllMovesChart from './AllMovesChart';
 import MoveTabs from './MoveTabs';
+import API from '../../utils/API';
 
 import './MoveInsights.css';
-import data from './../../sample-data/moveHist';
 
+function MoveInsights() {
+    const [pracData, setPracData] = useState([{}]);
+    const [tab, changeTab] = useState("elbowlock");
+    const [dataReturned, setDataReturned] = useState(false);
+    const [moveData, setMoveData] = useState([]);
 
-class MoveInsights extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            tab: "1",
+    useEffect(() => {
+        API.getAllPracs()
+            .then(response => {
+                setPracData(response.data);
+                setDataReturned(true);
+            })
+            .catch((err) => console.log(err));
+    }, []);
+
+    useEffect(() => {
+        setMoveData([]);
+        if (dataReturned) {
+            pracData.forEach(prac => {
+                setMoveData(md => md.concat(prac.moves.filter(move => {
+                    return move.move === tab;
+                })))
+            })
         }
-        this.changeTab = this.changeTab.bind(this);
-    }
+    }, [tab, dataReturned, pracData]);
 
-    changeTab(e) {
-        this.setState({ tab: e.target.getAttribute("name") })
-    }
 
-    render() {
-        return (
-            <div>
-                <MoveTabs changeTab={this.changeTab} tab={this.state.tab} />
-                <div className="outline-box text-center p-5">
-                    <p className="pb-3">Sync of up to last 50 move executions</p>
-                    <AllMovesChart
-                        data={data.find((move) => { return move.move === this.state.tab }).data.slice(-50)}
-                    />
+    return (
+        <div className="container-fluid">
+            <MoveTabs changeTab={(tab) => changeTab(tab)} tab={tab} />
+            <div className="row">
+                <div className="col-md-9">
+                    <div className="outline-box text-center py-5 px-3">
+                        {moveData.length ?
+                            <AllMovesChart tab={tab} data={moveData} />
+                            :
+                            dataReturned ?
+                                "No history for this move yet!"
+                                : <Spinner className="mt-3" animation="border" />
+                        }
+
+                    </div>
+                </div>
+                <div className="col-md-3">
+                    <img src={require(`../../assets/gifs/${tab}.gif`)} alt="movement gif" width="100%" />
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 export default MoveInsights;
