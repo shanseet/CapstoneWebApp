@@ -6,12 +6,13 @@ import API from '../../utils/API';
 function StartPrac() {
     const [hasStarted, setStarted] = useState(false);
     const [iStarted, didIStart] = useState(false); //will push to database only if true
-    const [isConnected, setConnected] = useState(false);
+    const [dbConnected, setDbConnected] = useState(false);
+    const [mqttConnected, setMqttConnected] = useState(false);
 
     useEffect(() => {
         API.isActive()
             .then(response => {
-                setConnected(true);
+                setDbConnected(true);
                 if (response.data === 1) setStarted(true);
             })
             .catch(err => {
@@ -21,15 +22,24 @@ function StartPrac() {
 
     return (
         <div className="text-center" style={{ position: "relative" }}>
-            <div style={{ position: "absolute", right: "0", top: "15px", fontSize: "0.8em" }}>
-                {isConnected ? "connected! data will be stored" : "offline :( connect to store data"}
+            <div style={{ position: "absolute", right: "0.3rem", top: "2rem", fontSize:"0.9rem" }}>
+                database {dbConnected ?
+                    <i className="fa fa-check-circle" style={{ color: "green" }}></i>
+                    :
+                    <i className="fa fa-times-circle" style={{ color: "red" }}></i>
+                } &nbsp; &nbsp;
+                mqtt {mqttConnected ?
+                    <i className="fa fa-check-circle" style={{ color: "green" }}></i>
+                    :
+                    <i className="fa fa-times-circle" style={{ color: "red" }}></i>}
             </div>
 
             {hasStarted ?
                 <ActivePrac
-                    handleStop={() => { if (isConnected) API.setActive(0) }} 
-                    sendData = {(newPrac) => { if (isConnected) API.addPrac(newPrac)}}
-                    iStarted = {iStarted}
+                    handleStop={() => { if (dbConnected) API.setActive(0) }}
+                    sendData={(newPrac) => { if (dbConnected) API.addPrac(newPrac) }}
+                    iStarted={iStarted}
+                    setMqttConnected={(val) => setMqttConnected(val)}
                 />
                 :
                 <StartQns handleStart={() => {

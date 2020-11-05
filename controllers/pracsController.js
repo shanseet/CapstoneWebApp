@@ -12,26 +12,17 @@ module.exports = {
             .then(prac => res.json(prac))
             .catch(err => res.status(422).json(err));
     },
-    getNum: function (req, res) {
-        Counter.findById("pracid")
-            .then(counter => res.json(counter.sequence_value))
-            .catch(err => res.status(422).json(err));
-    },
     add: function (req, res) {
-        Counter.findOneAndUpdate({ _id: "pracid" }, { $inc: { sequence_value: 1 } }, { new: true })
-            .then(counter => {
-                req.body.prac["_id"] = counter.sequence_value;
-                Prac.create(req.body.prac)
-                    .then(newPrac => res.json({ prac: "prac added successfully" }))
-                    .catch(err => { res.status(422).json(err); console.log(err) });
-            })
+        Prac.create(req.body.prac)
+            .then(newPrac => res.json({ prac: "prac added successfully" }))
+            .catch(err => { res.status(422).json(err); console.log(err) });
+    },
+    deleteOne: function (req, res) {
+        Prac.deleteOne({ _id: req.params.id }).then(result => res.json(result))
+            .catch(err => status(422).json(err));
     },
     deleteAll: function (req, res) {
-        Counter.findOneAndUpdate({ _id: "pracid" }, { sequence_value: 0 }, { new: true })
-            .then(counter => {
-                Prac.deleteMany({}).then(result => res.json(result))
-            })
+        Prac.deleteMany({}).then(result => res.json(result))
             .catch(err => res.status(422).json(err));
-
     }
 };

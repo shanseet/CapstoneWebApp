@@ -1,5 +1,4 @@
 import React from 'react';
-// import dancerIcon from '../../assets/dance-icon.svg';
 
 function StartQns(props) {
     const qnStyle = {
