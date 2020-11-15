@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import StartQns from './StartQns';
 import ActivePrac from './ActivePrac';
 import API from '../../utils/API';
 
@@ -22,7 +21,7 @@ function StartPrac() {
 
     return (
         <div className="text-center" style={{ position: "relative" }}>
-            <div style={{ position: "absolute", right: "0.3rem", top: "2rem", fontSize:"0.9rem" }}>
+            <div style={{ position: "absolute", right: "0.3rem", top: "2rem", fontWeight: 300 }}>
                 database {dbConnected ?
                     <i className="fa fa-check-circle" style={{ color: "green" }}></i>
                     :
@@ -34,20 +33,18 @@ function StartPrac() {
                     <i className="fa fa-times-circle" style={{ color: "red" }}></i>}
             </div>
 
-            {hasStarted ?
-                <ActivePrac
-                    handleStop={() => { if (dbConnected) API.setActive(0) }}
-                    sendData={(newPrac) => { if (dbConnected) API.addPrac(newPrac) }}
-                    iStarted={iStarted}
-                    setMqttConnected={(val) => setMqttConnected(val)}
-                />
-                :
-                <StartQns handleStart={() => {
+            <ActivePrac
+                handleStop={() => { if (dbConnected) API.setActive(0) }}
+                sendData={(newPrac) => { if (dbConnected) API.addPrac(newPrac) }}
+                iStarted={iStarted}
+                setMqttConnected={(val) => setMqttConnected(val)}
+                hasStarted={hasStarted}
+                handleStart={() => {
                     setStarted(true);
                     didIStart(true);
                     API.setActive(1);
-                }} />
-            }
+                }}
+            />
         </div>
     )
 }

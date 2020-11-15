@@ -43,7 +43,9 @@ function HomeLineGraph(props) {
 
     return (
         <div>
-            <small className="text-muted">{start.toLocaleString()}</small>
+            <small className="text-muted">
+                {start.toLocaleDateString('en-GB') + ", " + start.toLocaleTimeString()}
+            </small>
             <ResponsiveContainer width="85%" height={300}>
                 <LineChart data={graphs}>
                     <CartesianGrid stroke="rgba(112,112,112,0.2)" strokeDasharray="3 3" />

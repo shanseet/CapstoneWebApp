@@ -18,7 +18,10 @@ router.route('/isactive')
     .get(activePracController.isActive)
     .post(activePracController.setActive);
 
-router.route('/:id')
-    .get(pracsController.getById);
+router.route('/editNotes/:id')
+    .post(pracsController.editNotes);
+
+router.route('/findInRange')
+    .post(pracsController.findInRange);
 
 module.exports = router;

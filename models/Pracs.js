@@ -11,6 +11,7 @@ const moveSchema = new mongoose.Schema({
 const pracSchema = new mongoose.Schema({
     start: Date,
     moves: [moveSchema],
+    notes: String
 })
 
 module.exports = mongoose.model('prac', pracSchema);

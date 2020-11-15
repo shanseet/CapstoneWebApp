@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default {
+const apis = {
 	// Gets all practices
 	getAllPracs: function () {
 		return axios.get('http://localhost:4000/api/pracs');
@@ -13,6 +13,10 @@ export default {
 	addPrac: function (prac) {
 		return axios.post('http://localhost:4000/api/pracs', { prac: prac });
 	},
+	editNotes: function (id, content) {
+		return axios.post('http://localhost:4000/api/pracs/editNotes/' + id, { content: content })
+	}
+	,
 	// Check whether an active practice session is ongoing
 	isActive: function () {
 		return axios.get('http://localhost:4000/api/pracs/isactive');
@@ -26,5 +30,10 @@ export default {
 	},
 	deleteAllPracs: function () {
 		return axios.post('http://localhost:4000/api/pracs/deleteAll');
+	},
+	findInRange: function (start, end) {
+		return axios.post('http://localhost:4000/api/pracs/findInRange', { start: start, end: end });
 	}
 };
+
+export default apis;

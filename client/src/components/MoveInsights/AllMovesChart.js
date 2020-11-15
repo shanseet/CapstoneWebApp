@@ -18,14 +18,14 @@ function AllMovesChart(props) {
         <div>
             <p><small className="text-muted">{props.tab}</small></p>
             <ResponsiveContainer width="85%" height={350}>
-                <LineChart data={props.data}>
+                <LineChart data={props.data.slice(0,30)}>
                     <CartesianGrid stroke="rgba(112,112,112,0.2)" strokeDasharray="3 3" />
                     <Line type="monotone" dataKey="sync" stroke="#BE4C8F" strokeWidth="1.5" />
                     <XAxis
                         dataKey="time"
                         tick={<CustomizedAxisTick />}
                         interval={0}
-                        height={95}
+                        height={100}
                         minTickGap={1}
                         label={{ value: 'Time', position: 'insideTopRight', offset: 5 }}
                     />
@@ -37,7 +37,9 @@ function AllMovesChart(props) {
                     <Tooltip
                         contentStyle={tooltipStyle}
                         formatter={formatTooltip}
-                        labelFormatter={function (value) { return `${new Date(value).toLocaleString()}`; }}
+                        labelFormatter={function (value) {
+                            return `${new Date(value).toLocaleString('en-GB', { hour12: true })}`;
+                        }}
                     />
                 </LineChart>
             </ResponsiveContainer>

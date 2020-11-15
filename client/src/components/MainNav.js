@@ -28,7 +28,7 @@ function MainNav() {
     return (
         <div style={{ height: "5rem" }}>
             <Navbar fixed="top" style={{ color: "#FAFAFA", backgroundColor: "#2F4858" }}>
-                <div className="container justify-content-start">
+                <div className="container justify-content-start secondary-font">
                     <Navbar.Brand>
                         <img
                             src={logo} alt="logo"

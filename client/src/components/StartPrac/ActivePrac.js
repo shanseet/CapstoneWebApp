@@ -16,6 +16,7 @@ class ActivePrac extends Component {
             sync: -1,
             count: 0,
             isEnding: 0,
+            serverStatus: ("ready to dance!"),
             mqttSub: mqtt.connect('ws://broker.hivemq.com:8000/mqtt'),
             allMoves: [],
             startTime: ""
@@ -26,14 +27,26 @@ class ActivePrac extends Component {
     componentDidMount() {
         window.addEventListener('beforeunload', this.componentCleanup);
         this.state.mqttSub.on('connect', () => {
-            this.state.mqttSub.subscribe("137.132.86.240.G17");
-            console.log("topic connected");
+            this.state.mqttSub.subscribe(["137.132.86.240.G17", "GUI_DANCE_HELPER/1"]);
+            console.log("broker connected");
             this.setState({ startTime: new Date() });
             this.props.setMqttConnected(true);
         });
 
         this.state.mqttSub.on('message', (topic, msg) => {
-            this.processMessage(msg);
+            if (topic === "137.132.86.240.G17") {
+                this.processMessage(msg);
+            } else if (topic === "GUI_DANCE_HELPER/1") {
+                const received = msg.toString();
+                if (received[0] === "R") {
+                    this.setState({ serverStatus: "ready to dance!" });
+                } else if (received[0] === "S") {
+                    this.setState({ serverStatus: "STOP" });
+                } else if (received[0] === "T" && this.state.serverStatus === "ready to dance!") {
+                    const str = "timeout: reset to " + received.substring(15);
+                    this.setState({ serverStatus: str });
+                }
+            }
         });
     }
 
@@ -64,40 +77,44 @@ class ActivePrac extends Component {
 
     processMessage(msg) {
         let move = { time: new Date() };
-        this.setState((state) => ({ count: state.count + 1 }));
         let received = msg.toString().split("|");
-        this.setState({ move: received[1] });
-        move.move = received[1];
+        move.move = received[2];
+        this.setState({ move: received[2] });
         if (received[0]) {
             let dancerArr = [];
             let displayArr = [];
             received[0].substring(1).split(" ").forEach((dancer) => {
                 dancerArr.push(dancerToId[dancer]);
-                displayArr.push(dancer);
+            })
+            received[1].split(" ").forEach((pos) => {
+                displayArr.push(pos);
             })
             this.setState({ positions: displayArr });
             move.position = dancerArr;
         }
-        if (received[2]) {
+        if (received[3]) {
             let delayArr = [];
             let avgCalc = 0;
-            received[2].split(" ").forEach((val) => {
+            received[3].split(" ").forEach((val) => {
                 delayArr.push((parseFloat(val) * 1000).toFixed(2));
                 avgCalc += parseFloat(val) * 1000;
             })
             if (delayArr.length > 1) {
-                avgCalc = (avgCalc / (delayArr.length - 1)).toFixed(1);
+                avgCalc = (avgCalc / (delayArr.length - 1)).toFixed(2);
             }
             this.setState({ timeDelays: delayArr, sync: avgCalc })
             move.lag = delayArr;
             move.sync = avgCalc;
         }
-        this.setState(state => {
-            const allMoves = [...state.allMoves, move];
-            return { allMoves: allMoves };
-        });
+        if (this.props.hasStarted) {
+            this.setState(state => {
+                const allMoves = [...state.allMoves, move];
+                return { allMoves: allMoves };
+            });
+            this.setState((state) => ({ count: state.count + 1 }));
+        }
 
-        if (received[1] === "logout") { //if the logout message is not from the button
+        if (received[2] === "logout") { //if the logout message is not from the button
             if (received[0] && this.props.iStarted) {
                 document.getElementById("logout-btn").click();
             }
@@ -110,7 +127,8 @@ class ActivePrac extends Component {
     render() {
         const labelStyle = {
             color: "#707070",
-            fontSize: "1.25rem",
+            fontSize: "1.35rem",
+            fontFamily: 'Montserrat',
             paddingTop: "1rem",
             paddingBottom: "0.5rem",
             textTransform: "uppercase"
@@ -118,7 +136,7 @@ class ActivePrac extends Component {
 
         const logoutBtn = ( //informs all other clients of logout
             <button id="logout-btn" onClick={() => {
-                this.state.mqttSub.publish("137.132.86.240.G17", "|logout||");
+                this.state.mqttSub.publish("137.132.86.240.G17", "||logout||");
                 let newprac = { start: this.state.startTime, moves: this.state.allMoves };
                 if (newprac.moves.length) this.props.sendData(newprac);
             }}
@@ -131,29 +149,38 @@ class ActivePrac extends Component {
             return (
                 <Col key={index}>
                     <div>{position}</div>
-                    <div style={{ fontSize: "2.2rem" }}>
+                    <div style={{ fontSize: "2.6rem" }}>
                         {this.state.timeDelays[index] >= 0 ? this.state.timeDelays[index] + "ms" : <br />}
                     </div>
                 </Col>
             )
         })
 
+        const serverMsgStyle = {
+            height: "6rem",
+            backgroundColor: "white",
+            color: "#f04968"
+        }
+
         return (
-            <div className="pt-3 pb-3" style={{ fontSize: "2.8rem" }}>
-                <div className="fixed-top" style={{ height: "6rem", backgroundColor: "white" }}></div>
+            <div className="pt-4 pb-3" style={{ fontSize: "3.5rem" }}>
+                {this.props.hasStarted &&
+                    <div className="fixed-top pt-2 secondary-font" style={serverMsgStyle}>
+                        {this.state.serverStatus}
+                    </div>
+                }
                 <Row className="text-center mb-4">
                     <Col className="outline-box py-4">
-                        <Row className="justify-content-center">
-                            <Col xs={4}>
+                        <Row className="justify-content-center mb-3">
+                            <Col xs={6}>
                                 <div style={labelStyle}>Move</div>
                                 {this.state.count > 0 ? this.state.count + "." : ""} {this.state.move}
                             </Col>
-                            <Col xs={4}>
+                            <Col xs={3}>
                                 <div style={labelStyle}>Avg delay</div>
                                 <div>{this.state.sync !== -1 ? this.state.sync + "ms" : "..."}</div>
                             </Col>
                         </Row>
-                        <br />
                         <Row>
                             <Col>
                                 <div style={labelStyle}>LEFT</div>
@@ -170,16 +197,26 @@ class ActivePrac extends Component {
                         </Row>
                     </Col>
                 </Row>
-                {this.state.isEnding > 0 ?
-                    <div className="ending-nums">
-                        redirecting to practice history in
+                {this.props.hasStarted ?
+                    <div>
+                        {this.state.isEnding > 0 ?
+                            <div className="ending-nums">
+                                redirecting to practice history in
                         <span className="pl-4 pb-1" style={{ fontSize: "3rem", verticalAlign: "bottom" }}>
-                            {this.state.isEnding}
-                        </span>
+                                    {this.state.isEnding}
+                                </span>
+                            </div>
+                            :
+                            this.props.iStarted && logoutBtn}
                     </div>
                     :
-                    this.props.iStarted && logoutBtn
+                    <button className="btn start-btn" onClick={() => {
+                        this.setState({ count: 0, move: "...", positions: ["..."], timeDelays: [], sync: -1 });
+                        this.props.handleStart();
+                    }}
+                    >START PRACTICE</button>
                 }
+
             </div>
         )
     }

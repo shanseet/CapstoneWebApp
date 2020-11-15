@@ -4,12 +4,16 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const path = require('path');
+require('dotenv').config();
 
 app.use(cors());
 app.use(bodyParser.json());
 /* ========================= */
-mongoose.connect('mongodb://localhost/dashboard_app', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
-mongoose.connection.once('open', () => { console.log("MongoDB connected!") });
+const connection = "mongodb+srv://" + process.env.DB_username + ":"
+    + process.env.DB_password + "@capstonemern.ubkvj.mongodb.net/dashboard_app";
+mongoose.connect(connection, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+    .then(() => console.log("Database connected"))
+    .catch(err => console.log(err));
 /* ========================= */
 const pracs = require('./api/pracsApi');
 app.use('/api/pracs', pracs);
